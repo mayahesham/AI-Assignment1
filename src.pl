@@ -45,7 +45,42 @@ countItems([_|Tail], Count):-
     countItems(Tail, Count1),
     Count is Count1 + 1.
 countItems([], 0).
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%predicate5
+
+orderPrice([], 0).
+orderPrice([H|T], Total):-
+    item(H, _, Price),
+    orderPrice(T, SubTotal),
+    Total is SubTotal + Price.
+
+calcPriceOfOrder(CustomerName, OrderID, TotalPrice):-
+    customer(CustomerID, CustomerName),
+    order(CustomerID, OrderID, Items),
+    orderPrice(Items, TotalPrice).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %predicate6
-isBoycott(Name):-
- alternative(Name,_).
+isBoyCott(ItemName):-
+    alternative(ItemName,_).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%predicate7
+whyToBoycott(ItemName, Justification) :-
+    item(ItemName, CompanyName,_),
+    boycott_company(CompanyName, Justification).
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%predicate10
+%lesa ha test b3d ma al replace tt3ml
+
+calcPriceAfterReplacingBoycottItemsFromAnOrder(CustomerName, OrderID, NewItems, TotalPrice):-
+    replaceBoycottItemsFromAnOrder(CustomerName, OrderID, NewItems),
+    orderPrice(NewItems,TotalPrice).
+    
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%predicate11
+getTheDifferenceInPriceBetweenItemAndAlternative(ItemName, Alternative, DiffPrice):-
+    alternative(ItemName,Alternative),
+    item(ItemName,_,P),
+    item(Alternative,_,A),
+    DiffPrice is P-A.
