@@ -61,13 +61,44 @@ calcPriceOfOrder(CustomerName, OrderID, TotalPrice):-
     orderPrice(Items, TotalPrice).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %predicate6
-isBoyCott(ItemName):-
-    alternative(ItemName,_).
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+isBoyCott(Item):-
+ item(Item, Company, _),
+ boycott_company(Company, _).
+%%%%%%%0%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %predicate7
 whyToBoycott(ItemName, Justification) :-
     item(ItemName, CompanyName,_),
     boycott_company(CompanyName, Justification).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% predicate8
+removeBoycottItemsFromAnOrder(Username, OrderID, NewList) :-
+    customer(CustomerID, Username),
+    order(CustomerID, OrderID, OrderItems),
+    removeBoycottItems(OrderItems, NewList).
+
+removeBoycottItems([], []).
+removeBoycottItems([Item|Rest], NewList) :-
+    isBoyCott(Item),
+    !,
+    removeBoycottItems(Rest, NewList).
+removeBoycottItems([Item|Rest], [Item|NewRest]) :-
+        removeBoycottItems(Rest, NewRest).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% predicate9
+replaceBoycottItemsFromAnOrder(Username, OrderID, NewList) :-
+    customer(CustomerID, Username),
+    order(CustomerID, OrderID, OrderItems),
+    replaceBoycottItems(OrderItems, NewList).
+
+replaceBoycottItems([], []).
+replaceBoycottItems([Item|Rest], [Replacement|NewRest]) :-
+    isBoyCott(Item),
+    alternative(Item, Replacement),
+    !,
+    replaceBoycottItems(Rest, NewRest).
+replaceBoycottItems([Item|Rest], [Item|NewRest]) :-
+    replaceBoycottItems(Rest, NewRest).
 
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %predicate10
@@ -76,7 +107,7 @@ whyToBoycott(ItemName, Justification) :-
 calcPriceAfterReplacingBoycottItemsFromAnOrder(CustomerName, OrderID, NewItems, TotalPrice):-
     replaceBoycottItemsFromAnOrder(CustomerName, OrderID, NewItems),
     orderPrice(NewItems,TotalPrice).
-    
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %predicate11
 getTheDifferenceInPriceBetweenItemAndAlternative(ItemName, Alternative, DiffPrice):-
@@ -84,3 +115,28 @@ getTheDifferenceInPriceBetweenItemAndAlternative(ItemName, Alternative, DiffPric
     item(ItemName,_,P),
     item(Alternative,_,A),
     DiffPrice is P-A.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%predicate12
+add_item(ItemName, CompanyName, Price) :-
+    \+ item(ItemName, _, _),
+    assertz(item(ItemName, CompanyName, Price)).
+
+remove_item(ItemName, _, _) :-
+    item(ItemName, _, _),
+    retract(item(ItemName, _, _)).
+
+add_alternative(ItemName, Alternative) :-
+    \+ alternative(ItemName, _),
+    assertz(alternative(ItemName, Alternative)).
+
+remove_alternative(ItemName, _) :-
+    alternative(ItemName, _),
+    retract(alternative(ItemName, _)).
+
+add_boycott_company(CompanyName, Justification) :-
+    \+ boycott_company(CompanyName, _),
+    assertz(boycott_company(CompanyName, Justification)).
+
+remove_boycott_company(CompanyName, _) :-
+    boycott_company(CompanyName, _),
+    retract(boycott_company(CompanyName, _)).
