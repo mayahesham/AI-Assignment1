@@ -61,14 +61,17 @@ calcPriceOfOrder(CustomerName, OrderID, TotalPrice):-
     orderPrice(Items, TotalPrice).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %predicate6
-isBoyCott(Item):-
- item(Item, Company, _),
- boycott_company(Company, _).
-%%%%%%%0%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+isBoycott(Para) :-
+        item(Para, Company, _)
+    ->  boycott_company(Company, _);
+        boycott_company(Para, _).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %predicate7
-whyToBoycott(ItemName, Justification) :-
-    item(ItemName, CompanyName,_),
-    boycott_company(CompanyName, Justification).
+whyToBoycott(Para, Justification) :-
+    item(Para, CompanyName,_)
+    ->  boycott_company(CompanyName, Justification);
+    boycott_company(Para,Justification).
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % predicate8
 removeBoycottItemsFromAnOrder(Username, OrderID, NewList) :-
