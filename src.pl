@@ -81,7 +81,7 @@ removeBoycottItemsFromAnOrder(Username, OrderID, NewList) :-
 
 removeBoycottItems([], []).
 removeBoycottItems([Item|Rest], NewList) :-
-    isBoyCott(Item),
+    isBoycott(Item),
     !,
     removeBoycottItems(Rest, NewList).
 removeBoycottItems([Item|Rest], [Item|NewRest]) :-
@@ -96,7 +96,7 @@ replaceBoycottItemsFromAnOrder(Username, OrderID, NewList) :-
 
 replaceBoycottItems([], []).
 replaceBoycottItems([Item|Rest], [Replacement|NewRest]) :-
-    isBoyCott(Item),
+    isBoycott(Item),
     alternative(Item, Replacement),
     !,
     replaceBoycottItems(Rest, NewRest).
