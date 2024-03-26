@@ -1,4 +1,10 @@
 :-consult(data).
+:- dynamic customer/2.
+:- dynamic order/3.
+:- dynamic item/3.
+:- dynamic alternative/2.
+:- dynamic boycott_company/2.
+
 getCustomerID(CustomerName, CustomerID) :-
     customer(CustomerID, CustomerName).
 %predicate1
@@ -61,17 +67,14 @@ calcPriceOfOrder(CustomerName, OrderID, TotalPrice):-
     orderPrice(Items, TotalPrice).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %predicate6
-isBoycott(Para) :-
-        item(Para, Company, _)
-    ->  boycott_company(Company, _);
-        boycott_company(Para, _).
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+isBoyCott(Item):-
+ item(Item, Company, _),
+ boycott_company(Company, _).
+%%%%%%%0%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %predicate7
-whyToBoycott(Para, Justification) :-
-    item(Para, CompanyName,_)
-    ->  boycott_company(CompanyName, Justification);
-    boycott_company(Para,Justification).
-
+whyToBoycott(ItemName, Justification) :-
+    item(ItemName, CompanyName,_),
+    boycott_company(CompanyName, Justification).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % predicate8
 removeBoycottItemsFromAnOrder(Username, OrderID, NewList) :-
@@ -81,7 +84,7 @@ removeBoycottItemsFromAnOrder(Username, OrderID, NewList) :-
 
 removeBoycottItems([], []).
 removeBoycottItems([Item|Rest], NewList) :-
-    isBoycott(Item),
+    isBoyCott(Item),
     !,
     removeBoycottItems(Rest, NewList).
 removeBoycottItems([Item|Rest], [Item|NewRest]) :-
@@ -96,7 +99,7 @@ replaceBoycottItemsFromAnOrder(Username, OrderID, NewList) :-
 
 replaceBoycottItems([], []).
 replaceBoycottItems([Item|Rest], [Replacement|NewRest]) :-
-    isBoycott(Item),
+    isBoyCott(Item),
     alternative(Item, Replacement),
     !,
     replaceBoycottItems(Rest, NewRest).
@@ -143,3 +146,4 @@ add_boycott_company(CompanyName, Justification) :-
 remove_boycott_company(CompanyName, _) :-
     boycott_company(CompanyName, _),
     retract(boycott_company(CompanyName, _)).
+
